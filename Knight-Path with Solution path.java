@@ -1,7 +1,6 @@
 package knightpath;
 
 /**
- *
  * @author Tae
  */
 import java.util.*;
