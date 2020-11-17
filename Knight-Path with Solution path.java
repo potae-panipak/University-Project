@@ -345,7 +345,7 @@ public class KnightPath {
             System.out.print("Enter y to continue or any key to end program  = ");
             String s = scan.next();
             if (s.compareToIgnoreCase("y") != 0) {
-                System.out.println("====== THANK YOU ======");
+                System.out.println("===== THANK YOU =====");
                 break;
             }
         }
