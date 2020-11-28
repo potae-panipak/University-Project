@@ -1,178 +1,264 @@
 
-package n_queen;
-
-import java.util.*;
-
-/**
- *
- * @author user
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
-public class N_queen {
 
-    private static Scanner scanRandC = new Scanner(System.in);
+import java.util.InputMismatchException;
+import java.util.Scanner;
+import java.util.Stack;
 
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        int gridNumber = 0;
+class my_Queen {
+
+    Scanner scan;
+    int chessboard = 0;
+    int fixedRow, fixedColumn;
+
+    my_Queen() {
+        scan = new Scanner(System.in);
         boolean check = false;
-        System.out.print("Enter N (at least 4) = ");
-        while (!check) {
-            try {
-                gridNumber = scan.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.println("Please Enter N as Interger!!");
-                scan.next();
-                System.out.print("Enter N (at least 4) = ");
-                continue;
-            }
-            if (checkBoard(gridNumber)) {
-                System.out.println("Please Enter N at least 4!!");
-                System.out.print("Enter N (at least 4) = ");
-            } else {
-                placeQueens(gridNumber);
-                check = true;
-            }
-        }
-    }
-
-    private static boolean checkBoard(int gridSize) {
-        if (gridSize < 4) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private static void placeQueens(int gridSize) {
-        int[][] board = new int[gridSize][gridSize];
-        String checkContinue;
-        int row, column;
-        System.out.println("Board Layout");
-        printBoard(board);
-
         while (true) {
-            while (true) {
+            System.out.print("Enter N (at least 4) = ");
+            while (!check) {
                 try {
-                    System.out.print("Enter row of first Queen = ");
-                    row = scanRandC.nextInt();
-                    System.out.print("Enter column of first Queen = ");
-                    column = scanRandC.nextInt();
-                    if (row <= 0 || column <= 0 || row > gridSize || column > gridSize) {
-                        System.out.println("Please Insert row and column with in range 1 to gridsize");
-                        continue;
-                    }
-                    break;
+                    chessboard = scan.nextInt();
                 } catch (InputMismatchException e) {
-                    System.out.println("Please Enter row and column as interger");
-                    scanRandC.next();
-                }
-            }
-
-            board[row - 1][column - 1] = 1;
-            printBoard(board);
-
-            if (placeAllQueens(board, 0, row - 1, column - 1) == false) {
-                System.out.println("No Soulution");
-            } else {
-                System.out.printf("===================================== \n Solution:\n");
-                printBoard(board);
-            }
-            System.out.print("Enter y to continue with the same n = ");
-            checkContinue = scanRandC.next();
-            if (!checkContinue.equalsIgnoreCase("y")) {
-                break;
-            }
-            resetBoard(board);
-        }
-    }
-
-    private static boolean placeAllQueens(int board[][], int row, int selectedRow, int selectedColumn) {
-        if (row >= board.length) {
-            return true;
-        }
-        boolean isAllQueensPlaced = false;
-        for (int j = 0; j < board.length; j++) {
-            if (selectedRow == 0 && row == 0) {
-                if (j != selectedColumn) {
+                    System.out.println("Please enter N as integer!!");
+                    scan.next();
+                    System.out.print("Enter N (at least 4) = ");
                     continue;
                 }
-            }
-            if (isSafe(board, row, j)) {
-                board[row][j] = 1;
-                if (selectedRow == row + 1) {
-                    if (isSafe(board, selectedRow, selectedColumn)) {
-                        isAllQueensPlaced = placeAllQueens(board, row + 2, selectedRow, selectedColumn);
-                    } else {
-                        isAllQueensPlaced = false;
-                    }
+                if (chessboard < 4) {
+                    System.out.println("Please enter N at least 4!!");
+                    System.out.print("Enter N (at least 4) = ");
                 } else {
-                    isAllQueensPlaced = placeAllQueens(board, row + 1, selectedRow, selectedColumn);
+                    check = true;
+                }
+            } 
+            String s;
+            while (true) {
+                createQueen(chessboard);
+                System.out.print("Enter y to continue with the same n = ");
+                s = scan.next();
+                if (s.compareToIgnoreCase("y") != 0) {
+                    break;
                 }
             }
-            if (isAllQueensPlaced) {
+            System.out.print("Enter y to continue with another n = ");
+            s = scan.next();
+            if (s.compareToIgnoreCase("y") != 0) {
                 break;
-            } else {
-                board[row][j] = 0;
             }
+            check = false;
         }
-        return isAllQueensPlaced;
+        System.out.println("===================ThankYou GoodBye===================");
+
     }
 
-    private static boolean isSafe(int board[][], int row, int col) {
+    public void solve_Queen(int n, int row, int column) {
+        Stack<Integer> myStack = new Stack<Integer>();
+        fixedRow = row;
+        fixedColumn = column;
+        int current_Column = 0;
+        while (true) {
+            if (myStack.size() == n) {
+                break;
+            }
+            if (current_Column == n) {
+                if (myStack.isEmpty()) {
+                    showChessboard(n);
+                    System.out.println("No Solution !!!");
+                    break;
+                }
+                if ((myStack.peek() == n) && (myStack.size() == 1)) {
+                    break;
+                }
+                if (myStack.peek() == n) {
+                    myStack.pop();
+                    if (myStack.size() == fixedRow + 1) {
+                        myStack.pop();
+                        if (fixedRow == 0 && myStack.isEmpty()) {
+                            showChessboard(n);
+                            System.out.println("No Solution !!!");
+                            break;
+                        }
+                    }
+                    current_Column = myStack.pop() + 1;
+                } else {
+                    if (myStack.size() == fixedRow + 1) {
+                        myStack.pop();
+                        if (fixedRow == 0 && myStack.isEmpty()) {
+                            showChessboard(n);
+                            System.out.println("No Solution !!!");
+                            break;
+                        }
+                    }
+                    current_Column = myStack.pop() + 1;
+                }
+            } else if (myStack.size() == fixedRow) {
+                myStack.push(fixedColumn);
+                current_Column = 0;
+            } else if (check_Position_IsPlaceable(myStack, current_Column)) {
+                myStack.push(current_Column);
+                current_Column = 0;
+            } else {
+                current_Column++;
+            }
+        }
+        if (myStack.size() == n) {
+            showChessboard(n);
+            System.out.println("======================Solution======================");
+            printSolution(myStack);
+        }
+    }
 
-        //Left Upper Diagonal
-        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
-            if (board[i][j] == 1) {
+    public boolean check_Position_IsPlaceable(Stack<Integer> s, int current_Column_Position) {
+        for (int i = 0; i < s.size(); i++) {
+            if (s.get(i) == current_Column_Position) {
+                return false;
+            }
+            if ((s.get(i) - current_Column_Position) == (s.size() - i)) {
+                return false;
+            }
+            if ((current_Column_Position - s.get(i)) == (s.size() - i)) {
+                return false;
+            }
+            if (fixedColumn == current_Column_Position) {
+                return false;
+            }
+            if ((fixedColumn - current_Column_Position) == (s.size() - fixedRow)) {
+                return false;
+            }
+            if ((current_Column_Position - fixedColumn) == (s.size() - fixedRow)) {
                 return false;
             }
         }
-
-        //Right Upper Diagonal
-        for (int i = row - 1, j = col + 1; i >= 0 && j < board.length; i--, j++) {
-            if (board[i][j] == 1) {
+        if (s.isEmpty()) {
+            if (fixedColumn == current_Column_Position) {
+                return false;
+            }
+            if ((fixedColumn - current_Column_Position) == (s.size() - fixedRow)) {
+                return false;
+            }
+            if ((current_Column_Position - fixedColumn) == (s.size() - fixedRow)) {
                 return false;
             }
         }
-
-        //same Column
-        for (int i = row - 1; i >= 0; i--) {
-            if (board[i][col] == 1) {
-                return false;
-            }
-        }
-
         return true;
     }
 
-    private static void printBoard(int[][] board) {
-        System.out.print("       ");
-        for (int row = 0; row < board.length; row++) {
-            if (row == 0) {
-                for (int i = 1; i <= board.length; i++) {
-                    System.out.print(i + " ");
-                }
-                System.out.println();
-            }
-            System.out.print("     ");
-            System.out.print((row + 1) + " ");
-            for (int col = 0; col < board.length; col++) {
-                if (board[row][col] == 1) {
-                    System.out.print("Q ");
+    private static void printSolution(Stack<Integer> s) {
+        System.out.print("    ");
+        for (int a = 0; a < s.size(); a++) {
+            System.out.printf("%-3d ", a + 1);
+        }
+        System.out.println();
+        for (int i = 0; i < s.size(); i++) {
+            System.out.printf("%-3d ", i + 1);
+            for (int j = 0; j < s.size(); j++) {
+                if (j == s.get(i)) {
+                    System.out.print("Q   ");
                 } else {
-                    System.out.print("_ ");
+                    System.out.print("_   ");
                 }
             }
             System.out.println();
         }
-        System.out.println("");
+        System.out.println();
     }
 
-    private static void resetBoard(int[][] board) {
-        for (int row = 0; row < board.length; row++) {
-            for (int column = 0; column < board.length; column++) {
-                board[row][column] = 0;
+    private void showChessboard(int n) {
+        for (int i = 0; i < n + 1; i++) {
+            for (int j = 0; j < n + 1; j++) {
+                if (i == 0 && j == 0) {
+                    System.out.print("    ");
+                } else if (i == 0) {
+                    System.out.printf("%-4d", j);
+                } else if (j == 0) {
+                    System.out.printf("%-3d ", i);
+                } else if (i == fixedRow + 1 && j == fixedColumn + 1) {
+                    System.out.print("Q   ");
+                } else {
+                    System.out.print("_   ");
+                }
             }
+            System.out.println();
         }
     }
 
+    private void showBoardLayout(int n) {
+        for (int i = 0; i < n + 1; i++) {
+            for (int j = 0; j < n + 1; j++) {
+                if (i == 0 && j == 0) {
+                    System.out.print("    ");
+                } else if (i == 0) {
+                    System.out.printf("%-4d", j);
+                } else if (j == 0) {
+                    System.out.printf("%-3d ", i);
+                } else {
+                    System.out.print("_   ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    private void createQueen(int board) {
+        boolean checkRow = false, checkCol = false;
+        Scanner scan = new Scanner(System.in);
+        int row = 0, column = 0;
+        System.out.println("Board layout");
+        showBoardLayout(chessboard);
+        System.out.print("Enter row of first queen : ");
+        while (!checkRow) {
+            try {
+                row = scan.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter row as interger!!");
+                scan.next();
+                System.out.print("Enter row of first queen : ");
+                continue;
+            }
+            if (row > board) {
+                System.out.println("Please enter row, not exceeed N !!!!!!");
+                System.out.print("Enter row of first queen : ");
+            } else if (row <= 0) {
+                System.out.println("Please enter row with positive integer!!!!!!");
+                System.out.print("Enter row of first queen : ");
+            } else {
+                checkRow = true;
+            }
+        }
+
+        System.out.print("Enter column of first queen : ");
+        while (!checkCol) {
+            try {
+                column = scan.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter column as integer!!");
+                scan.next();
+                System.out.print("Enter column of first queen : ");
+                continue;
+            }
+            if (column > board) {
+                System.out.println("Please enter column, not exceed N !!!!!!");
+                System.out.print("Enter col of first queen : ");
+            } else if (column <= 0) {
+                System.out.println("Please enter column with positive integer!!!!!!");
+                System.out.print("Enter column of first queen : ");
+            } else {
+                checkCol = true;
+            }
+        }
+        solve_Queen(board, row - 1, column - 1);
+    }
+
+}
+
+public class n_Queen_Problem {
+
+    public static void main(String[] args) {
+        new my_Queen();
+    }
 }
